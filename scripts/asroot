@@ -1,0 +1,24 @@
+#!/bin/bash -x
+
+# replace startup/shutdown images
+cp -f /media/scripts/*.png /usr/share/plymouth/themes/olpc/
+
+# change the default favorites
+#cp -f /media/scripts/activities.default /usr/share/sugar/data/activities.defaults
+
+# put the mp3 libraries in place
+
+# update the clock if it is way off, i.e. battery probably died
+currentyear=`date|gawk '{print $6}'`
+if [ "$currentyear" \< "2015" ];then
+    date "120112002015"
+    /media/scripts/hwclock --systohc -noadjfile -utc
+fi
+
+# put a large marker on the screen that is easily checked for
+echo ""
+echo "           ********************************************"
+echo "           *                                          *"
+echo "           *  Good, bon, bueno install was successful *"
+echo "           *                                          *"
+echo "           ********************************************"

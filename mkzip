@@ -1,0 +1,13 @@
+#!/bin/bash
+# script to create zip of branding tool	
+set -x -e -u
+rm -f ../branding-*
+rm -f ./version*
+VERSION=`git describe | sed 's/^v//' | sed 's/-/./g'`
+echo  "$VERSION" > ./version_$VERSION
+#	tar zcfv ../branding-$VERSION.tar.gz -X exclude_list *
+	zip -r -x@exclude_list ../branding-$VERSION.zip *
+
+scp ../branding-* ghunt@unleashkids.org:/home/ghunt
+ssh ghunt@unleashkids.org
+
