@@ -1,4 +1,19 @@
 \ olpc.fth
+
+: force-date  ( -- )  \ set the clock to a specific date and time
+   d# 0 d# 0 d# 10  d# 12 d# 11 d# 2015       ( s m h d m y )
+   " set-time" clock-node @ $call-method   ( )
+;
+: get-year  ( -- year )  \ get the year only from the clock
+   time&date 2nip 2nip nip
+;
+: ?fix-clock  ( -- )  \ set the clock if the year is obviously wrong
+   get-year d# 2015 < if
+      force-date
+      visible ." warning: my clock was reset to 2015, check clock battery" cr
+   then
+;
+
 visible
 .( -- Tiny Core Linux boot script for Open Firmware    ) cr
 .(    by quozl@laptop.org, 2014-08-07               -- ) cr cr
@@ -40,7 +55,7 @@ bundle-suffix$ b>a " ARCHITECTURE" $set-macro
 bundle-suffix$ b>s " SERIALTERM"   $set-macro
 
 \ set kernel command line
-" fbcon=font:SUN12x22 superuser quiet showapps multivt waitusb=5 nozswap console=${SERIALTERM},115200 console=tty0"                           expand$ to boot-file
+" fbcon=font:SUN12x22 superuser quiet showapps multivt waitusb=5 nozswap console=${SERIALTERM},115200 console=tty0 xo-custom"   expand$ to boot-file
 
 \ choose initramfs
 " last:\boot\initrd.${ARCHITECTURE}"   expand$ to ramdisk
@@ -48,5 +63,6 @@ bundle-suffix$ b>s " SERIALTERM"   $set-macro
 \ choose kernel
 " last:\boot\vmlinuz.${MACHINE}"       expand$ to boot-device
 
+?fix-clock
 cr
 boot
